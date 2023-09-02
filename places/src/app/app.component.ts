@@ -13,25 +13,12 @@ export class AppComponent {
   apiLoaded: Observable<boolean>;
 
   constructor(public firebaseService: FirebaseService) {
-    this.loader.load().then(async () => {
-      const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
-      this.map = new Map(document.getElementById("map") as HTMLElement, {
-        center: { lat: 21.15, lng: 79.0 },
-        zoom: this.zoom,
-      });
-    });
-  
   }
 
   title: string = 'My Drives';
   center: google.maps.LatLngLiteral = {lat: 21.15, lng:  79.0}
-  zoom:number = 7;
   kmls : any;
   map: google.maps.Map;
-  loader = new Loader({
-    apiKey: "AIzaSyA4GGCTcxjVf_VREUwjEzjhCRoakixiiEw",
-    version: "weekly",
-  });
   
 
 
@@ -40,10 +27,22 @@ export class AppComponent {
   ngOnInit() {
     this.firebaseService.getUrls().subscribe(result => {
       this.kmls = result
-      this.zoom = 5;
-      for (var kml of this.kmls) {
-        new google.maps.KmlLayer({map:this.map, url:kml});
-        }
-        })
+      var zoom = 6;
+      var loader = new Loader({
+        apiKey: "AIzaSyCxUM3TIxN3e3VBtn8L4z3Uq-2o254Nbng",
+        version: "weekly",
+      });
+      loader.load().then(async () => {
+        const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+        this.map = new Map(document.getElementById("map") as HTMLElement, {
+          center: { lat: 21.15, lng: 79.0 },
+          zoom: zoom,
+        });
+        for (var kml of this.kmls) {
+          var layer = new google.maps.KmlLayer({url:kml});
+          layer.setMap(this.map)
+          }
+      });
+    });
   }
 }
