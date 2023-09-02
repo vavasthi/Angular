@@ -1,5 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { FirebaseService } from './services/firebase.service';
+import { Loader } from "@googlemaps/js-api-loader"
+import { Observable, of } from 'rxjs';
+import { MapKmlLayer } from '@angular/google-maps';
 
 @Component({
   selector: 'app-root',
@@ -7,18 +10,40 @@ import { FirebaseService } from './services/firebase.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(public firebaseService: FirebaseService) {}
+  apiLoaded: Observable<boolean>;
+
+  constructor(public firebaseService: FirebaseService) {
+    this.loader.load().then(async () => {
+      const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+      this.map = new Map(document.getElementById("map") as HTMLElement, {
+        center: { lat: 21.15, lng: 79.0 },
+        zoom: this.zoom,
+      });
+    });
+  
+  }
 
   title: string = 'My Drives';
-  lat: number = 21.15;
-  lng: number = 79.0;
-  zoomLevel:number = 8;
+  center: google.maps.LatLngLiteral = {lat: 21.15, lng:  79.0}
+  zoom:number = 7;
   kmls : any;
+  map: google.maps.Map;
+  loader = new Loader({
+    apiKey: "AIzaSyA4GGCTcxjVf_VREUwjEzjhCRoakixiiEw",
+    version: "weekly",
+  });
+  
+
+
+
 
   ngOnInit() {
     this.firebaseService.getUrls().subscribe(result => {
       this.kmls = result
-      this.zoomLevel = 5;
-    })
+      this.zoom = 5;
+      for (var kml of this.kmls) {
+        new google.maps.KmlLayer({map:this.map, url:kml});
+        }
+        })
   }
 }

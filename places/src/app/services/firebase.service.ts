@@ -1,13 +1,16 @@
-import { Injectable } from '@angular/core';
-import { AngularFireDatabase } from '@angular/fire/database'
+import { Injectable, inject } from '@angular/core';
+import { Database, getDatabase, ref, onValue, list, listVal } from '@angular/fire/database'
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
 
-  constructor(public db:AngularFireDatabase) { }
+  private database : Database = inject(Database)
+  constructor() { 
+
+  }
 
   getUrls() {
-    return this.db.list("/maps").valueChanges();
+    return listVal(ref(this.database, "/maps"));
   }
 }
