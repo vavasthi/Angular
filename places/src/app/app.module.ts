@@ -8,8 +8,8 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { environment } from '../environments/environment';
+import { GoogleMapsModule } from '@angular/google-maps';
 
-import { AgmCoreModule } from '@agm/core';
 
 @NgModule({
   declarations: [
